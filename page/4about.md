@@ -16,6 +16,20 @@ Hi.
 * 2012.03 부경대 컴공 입학
 * 2019.02 부경대 컴공 졸업
 
+## 관심분야
+
+### Frontend
+
+- Vue.js
+
+### Server
+
+- Spring Boot
+- JPA
+- QueryDsl
+
+&nbsp;
+
 <iframe src="https://githubbadge.appspot.com/bactoria?s=1" style="border: 0;height: 142px;width: 300px;overflow: hidden;" frameBorder="0"></iframe>
 
 ## Contact
