@@ -43,9 +43,6 @@ author: bactoria
         * 더 좋은 사회를 만들려고 노력함
             - Facebook Safety Check (수익창출 X)
 
->  ~ 
-- mark zuckerberg
-
 &nbsp;
 
 ### Hacker Way
