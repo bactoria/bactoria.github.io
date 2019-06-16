@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "헬로월드"
+title:  "헬로 월드"
 categories: hello
 tags: hello world
 author: bactoria
@@ -12,3 +12,6 @@ author: bactoria
 ## 헬로월드
 
 안녕?
+
+
+![](./1.jpg)
