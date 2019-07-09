@@ -1,8 +1,7 @@
 ---
 layout: post
-title:  "헬로 월드"
-categories: hello
-tags: hello world
+title:  "currentUser"
+categories: Spring
 author: bactoria
 ---
 

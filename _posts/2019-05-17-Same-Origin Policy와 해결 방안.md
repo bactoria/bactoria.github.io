@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Same-Origin Policy와 해결 방안"
-categories: Rest API
+categories: Rest
 author: bactoria
 ---
 
