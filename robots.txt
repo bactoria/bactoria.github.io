@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /archive/
+Disallow: /category/
+Disallow: /about/
+
+Sitemap: http://bactoria.github.io/sitemap.xml
