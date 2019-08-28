@@ -6,14 +6,31 @@
     <title>{% if page.title %}{{ page.title | escape }}{% else %}{{ site.title | escape }}{% endif %}</title>
     <meta name="description" content="{% if page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}{% else %}{{ site.description }}{% endif %}">
 
-    <link rel="shortcut icon" href="/laptopParrot.gif?" type="image/x-icon">
-    <link rel="icon" href="/laptopParrot.gif?" type="image/x-icon">
+    <link rel="shortcut icon" href="/assets/favicon/p0.png?" type="image/x-icon">
+    <link id= "favicon" rel="icon" href="#" type="image/x-icon">
+
     <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://at.alicdn.com/t/font_8v3czwksspqlg14i.css">
     <link rel="stylesheet" href="{{ "/css/main.css " | prepend: site.baseurl }}">
     <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
     <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ "/feed.xml " | prepend: site.baseurl | prepend: site.url }}">
 
+    <script>
+      // favicon
+        var faviconRoute = '/assets/favicon/';
+        var faviconNames = ['p0.png', 'p1.png', 'p2.png', 'p3.png', 'p4.png',
+                        'p5.png', 'p6.png', 'p7.png', 'p8.png', 'p9.png'];
+    
+        var idx = 0;
+    
+        setInterval(func, 220);
+    
+        function func() {
+            document.querySelector("#favicon").setAttribute('href', faviconRoute + faviconNames[idx++]);
+            idx %= faviconNames.length;
+        }
+    </script>
+    
 {% if site.baidu_tongji_id %}
     <script>
     // 百度统计代码
