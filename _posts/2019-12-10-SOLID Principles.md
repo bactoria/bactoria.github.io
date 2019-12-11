@@ -116,7 +116,7 @@ S는 T의 서브타입이다.
 
 ### 리스코프 치환 원칙을 위배하는 예시
 
-> 직사각형(Rectangle)과 정사각형(Square)의 상속 관계는 리스코프 치환 원칙을 위배하는 고전적인 사례 중 하나다 [Martin02, Feathers04, Meyers05].  
+> 직사각형(Rectangle)과 정사각형(Square)의 상속 관계는 리스코프 치환 원칙을 위배하는 고전적인 사례 중 하나다
 
 정사각형은 직사각형이다 라는 것을 만족하지만, 리스코프 치환 원칙을 위배할 수 있음.
 
@@ -148,9 +148,67 @@ resize(square, 50, 100);
 
 resize 메서드는 직사각형은 너비와 높이가 다를 수 있다고 가정하기에, 너비와 높이가 항상 동일하다고 가정하는 정사각형을 넣었을 경우에 문제가 된다.
 
+
+&nbsp;
+&nbsp;
 &nbsp;
 
-( TODO:: ISP, DIP )
+## Interface Segregation Principle (인터페이스 분리 원칙)
+
+> 인터페이스를 클라이언트의 기대에 따라 분리함으로써 변경에 의해 영향을 제어하는 설계 원칙  
+
+> 이 원칙은 ‘비대한’ 인터페이스의 단점을 해결한다. 비대한 인터페이스를 가지는 클래스는 응집성이 없는 인터페이스를 가지는 클래스다. 즉, 이런 클래스의 인터페이스는 메서드의 그룹으로 분해될 수 있고, 각 그룹은 각기 다른 클라이언트 집합을 지원한다.
+
+인터페이스를 분리하면 변경에 대한 영향을 덜 받을 수 있다.
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+## Dependency Inversion Principle (의존성 역전 원칙)
+
+```java
+@RequiredConsructor
+public class Movie {
+	  private final AmountDiscountPolicy amountDiscountPolicy;
+	  // ...
+ 
+    public Money calculateMovieFee(Screening screening) {
+        return fee.minus(amountDiscountPolicy.calculateDiscountAmount(screening));
+    }
+}
+```
+
+상위 수준 클래스인 Movie가 하위 수준 클래스인 AmountDiscountPolicy에 의존한다.  만약 비즈니스가 변경되지 않는다면 문제되지 않겠지만, 변경될 가능성이 있다면 설계는 달라져야 한다.
+
+위의 구조는 결합도가 높아지고 재사용성과 유연성이 낮아진다. Movie를 재사용하기 위해서는 AmountDiscountPolicy 를 함께 재사용 해야 하기 때문이다.
+
+이 설계가 변경에 취약한 이유는 요금을 계산하는 상위 정책이 요금을 계산하는 데 필요한 구체적인 방법에 의존하기 때문이다.
+
+이를 해결하기 위해서는 AmountDiscountPolicy의 추상화인 인터페이스에 의존해야 한다
+
+```java
+@RequiredConsructor
+public class Movie {
+	  private final DiscountPolicy discountPolicy;
+	  // ...
+ 
+    public Money calculateMovieFee(Screening screening) {
+        return fee.minus(discountPolicy.calculateDiscountAmount(screening));
+    }
+}
+```
+
+이제 Movie를 재사용 할 때 AmountDiscountPolicy, PercentDiscountPolicy 둘 중 아무거나 사용할 수 있다. 어떤걸 사용할지는 런타임 시점에 결정된다!
+
+유연해졌다. 
+
+&nbsp;
+
+> ‘역전’ 이라는 단어를 사용한 이유는 DIP를 따르는 설계는 의존성의 방향이 전통적인 절차형 프로그래밍과는 반대방향으로 나타나기 때문이다. - 로버트 마틴  
+
+1. 상위 수준의 모듈은 하위 수준의 모듈에 의존해서는 안 된다. 둘 모두 추상화에 의존해야 한다.
+2. 추상화는 구체적인 사항에 의존해서는 안 된다. 구체적인 사항은 추상화에 의존해야 한다.
 
 &nbsp;
 &nbsp;
@@ -158,14 +216,15 @@ resize 메서드는 직사각형은 너비와 높이가 다를 수 있다고 가
 
 ### 출처
 
-1. SRP
-- https://code.tutsplus.com/ko/tutorials/solid-part-1-the-single-responsibility-principle--net-36074
-- http://www.gisdeveloper.co.kr/?p=691
-- https://medium.com/@narusas/단일-책임-원칙-the-single-responsibility-principle-번역-c21e0b7307b0
+- **SRP**
+  - https://code.tutsplus.com/ko/tutorials/solid-part-1-the-single-responsibility-principle--net-36074
+  - http://www.gisdeveloper.co.kr/?p=691
+  - https://medium.com/@narusas/단일-책임-원칙-the-single-responsibility-principle-번역-c21e0b7307b0
 
-1. OCP
-- http://wonwoo.ml/index.php/post/1726
-- https://blog.naver.com/PostView.nhn?blogId=jwyoon25&logNo=221615569649&categoryNo=0&parentCategoryNo=0&viewDate=&currentPage=1&postListTopCurrentPage=1&from=postView
+- **OCP**
+  - http://wonwoo.ml/index.php/post/1726
+  - https://blog.naver.com/PostView.nhn?blogId=jwyoon25&logNo=221615569649&categoryNo=0&parentCategoryNo=0&viewDate=&currentPage=1&postListTopCurrentPage=1&from=postView
 
-1. LSP
-- 오브젝트 - 조영호
+- **LSP, ISP, DIP**
+  - 오브젝트 - 조영호
+
