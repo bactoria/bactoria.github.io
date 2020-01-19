@@ -121,7 +121,7 @@ http {
 ```
 
 **1) `limit_req_zone $binary_remote_addr zone=myName:10m rate=5r/s;`**
-   - `limit_req_zone` `키` `공유 메모리 영역` `rate`
+   - `limit_req_zone` `키` `공유 메모리 영역` `rate` - zone을 생성함
      - `키` : 요청에 limit을 걸 클라이언트 기준
        - $remote_addr: 클라이언트의 IP 주소
        - **$binary_remote_addr**: 클라이언트 IP 주소 (이진 표현)
@@ -130,28 +130,26 @@ http {
        - **zone=myName:10m**: 공유 메모리 영역 크기는 10mb, 이름은 myName
        - **$binary_remote_addr** (클라이언트 IP 주소의 상태) 가 보관됨
      - `rate` : 요청 비율 제한 ( 초당요청(r/s), 분당요청(r/m) )
-       - **rate=1r/m** ?
-         - 1분에 1개씩 request를 Server로 보냄
-       - **rate=12r/m** ?
-         - 5초에 1개씩 request를 Server로 보냄 (12request/60초 => 5초에 1request)
+       - **rate=1r/m** : 1분에 1개씩 request를 Server로 보냄
+       - **rate=12r/m** : 5초에 1개씩 request를 Server로 보냄  (12request/60초 => 5초에 1request)
 
 **2) `limit_req zone=one burst=5;`**
-  - `limit_req` `zone 이름` `burst`
+   - `limit_req` `zone 이름` `burst`
+     - `zone 이름`: 위에서 만든 zone을 가져다 씀.
+     - `burst`: 일종의 버킷이다.
+       - burst 용량을 초과하는 요청이 들어올 경우 429(Too Many Request) 에러 반환
+   - `burst=5`인 위의 경우에 7개의 요청이 동시에 들어온다면 ?
+     - `Server(1개), burst(5개), Error(1개)`
+   - `burst=5`인 위의 경우에 6개의 요청이 동시에 들어온다면 ?
+     - `Server(1개), burst(5개)`
+   - `burst=4`인 위의 경우에 9개의 요청이 동시에 들어온다면 ?
+     - `Server(1개), burst(4개), Error(4개)`
+
+위의 예시는 절대적인 것은 아니다. 위의 예시들은 `burst`가 가득 차기 이전에 `burst` -> `Server`로 첫 요청을 먼저 수행한다고 가정한 것. 이에 `Server(1개)` 가 담겨있는 것임.
 
 **3) `limit_req_status 429;`**
-   - burst 용량을 초과하는 요청이 들어올 경우 429(Too Many Request) 에러 반환
    - 이 설정을 별도로 하지 않으면 503 에러 응답
-   - `burst=5`인 위의 경우에 7개의 요청이 동시에 들어온다면 ?
-     - Server에서 처리중인 `1개의 request`
-     - burst에 대기중인 `5개의 request`
-     - 갈 곳 없어 429 에러를 Response하는 `1개의 request`
-   - `burst=5`인 위의 경우에 6개의 요청이 동시에 들어온다면 ?
-     - Server에서 처리중인 `1개의 request`
-     - burst에 대기중인 `5개의 request`
-   - `burst=4`인 위의 경우에 9개의 요청이 동시에 들어온다면 ?
-     - Server에서 처리중인 `1개의 request`
-     - burst에 대기중인 `4개의 request`
-     - 갈 곳 없어 429 에러를 Response하는 `4개의 request`
+   - 이 설정을 설정하면 `burst`가 가득찼을 경우 429 에러 응답
 
 &nbsp;
 
@@ -159,12 +157,13 @@ http {
 
 **rate=12r/m, burst=5 인 Nginx에**
 
-**10개의 Request Message가 동시에 들어온다면 ?**
-- 6개의 200, 4개의 429
-  - 1개는 Server가 처리중
-  - 5개는 burst로 들어감
+**한 클라이언트의 Request Message가 동시에 10개 들어온 경우**
+- Ok(6개), Error(4개)
+  - Server(1개)
+  - burst(5개)
     - burst에 쌓인 Request를 5초당 1개 씩  Server로 보냄
-  - 4개는 바로 429 에러 응답
+  - Error(4개)
+    - burst가 가득 찼으므로 에러 응답
 - 최종 결과
   - OK (1번째 Request)
     - Error (7번째 Request)
@@ -178,17 +177,20 @@ http {
   - OK (6번째 Request)
 
 
-**10개의 Request Message가 동시에 들어오고, 7초 후에 2개의 Request Message가 들어온다면 ?**
-- 7개의 200, 5개의 429
+**한 클라이언트의 Request Message가 동시에 10개 들어오고,**  
+**7초 후에 Request Message가 동시에 2개 들어온 경우**
+- Ok(7개), Error(5개)
   - (0초)
-    - 1개는 Server가 처리중
-    - 5개는 burst로 들어감
+    - Server(1개)
+    - burst(5개)
       - burst에 쌓인 Request를 5초당 1개 씩  Server로 보냄
-    - 4개는 바로 429 에러 응답
+    - Error(4개)
+      - burst가 가득 찼으므로 에러 응답
   - (7초)
-    - 1개는 burst로 들어감
-      - 기존에 burst에는 4개의 Request가 대기중이라 남은 공간 1개가 존재
-    - 1개는 바로 429 에러 응답
+    - burst(1개)
+      - 기존에 burst에는 4개의 Request가 대기중. 남은 공간 1개를 채움.
+    - Error(1개)
+      - burst가 가득 찼으므로 에러 응답
   - 최종 결과
     - OK (1번째 Request)
       - Error (7번째 Request)
@@ -203,7 +205,7 @@ http {
     - OK (6번째 Request)
     - OK (11번째 Request)
 
-(참고로 서버의 요청 처리 속도에 따라 다를 수 있다. ex. `1번째 Request`는 `10번째 Request` 뒤에 찍히는 경우 )
+(서버의 요청 처리 속도에 따라 다를 수 있다. ex. `1번째 Request`는 `10번째 Request` 뒤에 찍히는 경우 )
 
 &nbsp;  
 
