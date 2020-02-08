@@ -9,18 +9,18 @@ Vue.js 프로젝트에서 Rest API로 Ajax요청을 했더니 다음과 같은 �
 
 &nbsp;
 
-**Chrome**
+**Chrome**  
 ![image](https://user-images.githubusercontent.com/25674959/57191428-81660080-6f60-11e9-87f4-2533cf1cb640.png)
 
 &nbsp;
 
-**Firefox**
+**Firefox**  
 ![image](https://user-images.githubusercontent.com/25674959/57191423-71e6b780-6f60-11e9-8ec7-172f7974d606.png)
 
 &nbsp;
 
-**해결법**
-1. CORS 허용 할 메소드에 @CrossOrigin를 추가.
+**해결법**  
+1. CORS 허용 할 메소드에 @CrossOrigin를 추가
 2. 시큐리티 설정에 Options Method를 permitAll
 
 &nbsp;
@@ -46,7 +46,7 @@ Ajax부터 시작하면 될것 같다.
 
 [지메일이 핫메일을 이긴 진짜 이유 - 조성문님](https://sungmooncho.com/2012/12/04/gmail-and-ajax/2004년)에 따르면 2004년 4월 1일에 Gmail이 나왔는데, 메일을 확인하거나 발송할 때 화면 전체가 깜빡이는 것이 없어서 핫메일보다 빠르고 쾌적했다고 한다. Ajax 를 사용했기 때문이다. (Gmail의 성공 요인은 Ajax가 전부는 아니라고 한다. 어쨌든 빠른건 사실이다.)
 
-이 Ajax는 `XMLHttpRequest` 객체를 통해 구현할 수 있으나, 보안 이슈가 있음.
+이 Ajax는 `XMLHttpRequest` 객체를 통해 구현할 수 있으며, 여기에는 보안 이슈가 있었디.
 
 &nbsp;
 
@@ -76,11 +76,11 @@ xhr.send(null);
 
 ## SOP (Same-Origin Policy)
 
-이 정책은 원래 웹 사이트 방문 시에 다른 Origin의 DOM에 접근시 허용하지 않는 정책이었다. 유저가 신뢰할 수 없는 사이트 방문에 대한 걱정을 덜 수 있다.
+SOP는 웹 사이트 방문 시에 다른 Origin의 DOM에 접근시 허용하지 않는 정책이었다. 유저가 신뢰할 수 없는 사이트 방문에 대한 걱정을 덜 수 있다.
 
-Ajax가 나온 이후, XMLHttpRequest에도 확장 적용되었다. 웹 브라우저는 웹 페이지에 포함된 스크립트가 어느 웹 페이지의 데이터에 액세스하는 것을 허용하지만, 두 웹 페이지가 `Same Origin`일 경우에만 허용하게 되었다.
+Ajax가 나온 이후 CSRF를 막기 위해 XMLHttpRequest에도 확장 적용되었다. 웹 브라우저는 현재 웹 페이지에 포함된 스크립트가 어떤 웹 페이지의 데이터에 액세스하는 것을 허용하기 위해서는, 이 두 웹 페이지가 `Same Origin`이어야 한다.
 
-즉, fakebook을 방문했을 때, facebook으로 스크립트를 보낼 수 없게끔 웹 브라우저가 막는다.
+즉, fakebook을 방문했을 때, facebook으로 스크립트를 보낼 수 없게끔 웹 브라우저가 막는 것이 가능해진다.
 
 &nbsp;
 
@@ -98,7 +98,7 @@ Ajax가 나온 이후, XMLHttpRequest에도 확장 적용되었다. 웹 브라�
 
 &nbsp;
 
-Same Origin이 아닐 경우(Cross Origin 일 경우), 브라우저에 의해 거절된다.
+Same Origin이 아닐 경우(Cross Origin 일 경우), **브라우저에 의해 요청이 거절된다.**
 
 거절된 것이 이 글의 가장 위에 있는 이미지이다.
 
@@ -110,12 +110,33 @@ Same Origin이 아닐 경우(Cross Origin 일 경우), 브라우저에 의해 �
 
 2005년 제안된 방법.
 
-JSONP를 사용하면 SOP를 위반하지 않고 다른 도메인으로부터 JSON 데이터를 받을 수 있다.
-다른 도메인으로부터 JSON 응답을 받을 수 있는 <script></script> 요소를 이용하여  src를 호출하여 사용한다. 
+JSONP를 사용하면 XMLHttpRequest 객체를 사용하지 않고 Cross Origin인 서버로부터 JSON 데이터를 받을 수 있다.
 
-이 경우, 서버에서 json을 wrapping해서 응답해줘야 함. 이 때 감싸는걸 Padding이라고 불러서 JSONP 라고 부르는 것 같다.
+XMLHttpRequest 객체를 사용하지 않기 때문에 SOP를 위배하지 않는 것이다.
 
-GET Method만을 지원한다는 단점과, 보안상의 이슈로 인해 CORS를 추천하는 분위기 라고 함.
+JSONP는 서버로부터 콜백함수를 실행하는 코드를 받아온다.
+
+**요청**
+```javascript
+// ...
+<script src="http://food-truck.shop/search?callback=loadTruckList&s=떡볶이"></script>
+```
+
+`http://food-truck.shop/search?`**`callback=loadTruckList`**`&s=떡볶이` 를 아래와 같이 바꿔준다.
+
+**응답**
+```javascript
+// ...
+loadTruckList(["John Miller","John C. Potter"])
+```
+
+food-truck.shop에서 위와 같이 변환해준 것이다.
+
+jsonp는 클라이언트에서 쓰겠다고 해서 쓸 수 있는 것이 아니라, 서버에서 위의 형식처럼 함수로 응답해주어야 한다.
+
+즉, 서버에서 json 데이터를 함수로 wrapping해서 응답해줘야 하는데 이처럼 감싸는 행위를 Padding이라고 불러서 JSONP 라고 부르는 것 같다.
+
+GET Method만을 지원한다는 단점과 보안상의 이슈로 인해 CORS를 추천하는 분위기 라고 함.
 
 &nbsp;
 
@@ -137,17 +158,24 @@ JSONP 패턴의 현대적인 대안.
 
 &nbsp;
 
-해당 요청의 Method가 GET/HEAD 이고, custom header가 없으면 Cross-Origin에 리소스를 요청 할 수 있다. 나의 경우도 CORS가 문제였을 때는 POST, PUT, DELETE Method를 사용할 때 발생했다.
+서버에 
+클라이언트가 서버로 HTTP Request를 보낼 때 
+- GET ::  
+  - custom header가 없으면
+- HEAD ::  
+  - custom header가 없으면
+- POST ::
+  - ContentType이 standard(`application/x-www-form-urlencoded` or `multipart/form-data` or `text/plain`) 이고, custom header가 없으면
 
-POST의 경우에도 Content-type이 셋 중 하나(application/x-www-form-urlencoded, multipart/form-data, text/plain) 이고 custom header가 없다면 XHR 요청이 가능하다.
+Cross-Origin에 리소스를 요청 할 수 있다.
 
-그 밖의 경우에는 서버에 **Preflight 요청**을 보내야 함. (ex. POST로 요청을 할 때 Content-type이 application/json 인 경우)
+그 밖의 경우 (ex. POST로 요청에 Content-type이 application/json 인 경우 -> custom header를 가짐.)에는 서버에 **Preflight Request**를 보내야 함.
 
 ### Preflight Request
 
-요청이 위의 기준을 충족하지 못하면, 브라우저가 자동으로 원래 요청보다 먼저 OPTIONS Method로 HTTP 요청하여, 원래 요청을 전송해도 안전한지 확인한다. 
+클라이언트가 서버로 HTTP Request를 보낼 때 위의 기준을 충족하지 못하면, **브라우저가 자동으로 원래 요청보다 먼저 OPTIONS Method로 HTTP 요청하여, 원래 요청을 전송해도 안전한지 확인한다.** 
 
-위 그림에서 서버쪽으로 간 것이 Preflight Request 과정이다.
+위 그림에서 빨간 부분이 Preflight Request 과정이다.
 
 ```javascript
 // Request Message
@@ -168,7 +196,7 @@ Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE
 
 ### JSONP vs CORS
 
-JSONP는 GET 요청 방법만 지원하는 반면, CORS는 다른 HTTP Method도 지원한다. 
+JSONP는 GET Method만 지원하는 반면, CORS는 다른 Method도 지원한다. 
 
 JSONP는 사이트 간 스크립팅(XSS) 문제를 야기할 수 있다.
 
@@ -213,6 +241,7 @@ Axios의 경우 0.6.0 버전에서는 XDomainRequest로 IE8을 지원했음. (�
     + https://ko.wikipedia.org/wiki/JSONP
     + https://kingbbode.tistory.com/26
     + http://charlie0301.blogspot.com/2013/12/jquery-ajax-same-origin-policy-jsonp.html
+    + http://dev.epiloum.net/1311
 - CORS
     + https://dev.to/effingkay/cors-preflighted-requests--options-method-3024
     + https://developer.mozilla.org/ko/docs/Web/HTTP/Access_control_CORS
