@@ -484,7 +484,7 @@ output { ... }
 
 **input / output**
 
-<img width="500" alt="스크린샷 2020-04-11 오후 9 09 27" src="https://user-images.githubusercontent.com/25674959/79043211-db734980-7c38-11ea-9ef5-d76d3c58c2fd.png">
+<img width="500" alt="스크린샷 2020-04-12 오전 11 47 05" src="https://user-images.githubusercontent.com/25674959/79059313-5d07bd80-7cb3-11ea-8a39-5fed9e59fbaf.png">
 
 `trim()` 함수와 같은 기능이다.  
 
