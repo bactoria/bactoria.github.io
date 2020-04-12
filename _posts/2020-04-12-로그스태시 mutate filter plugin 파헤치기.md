@@ -17,9 +17,9 @@ raw data를 Elasticsearch로 밀어넣기 전에, 사용하기 편하도록 가�
 
 ( 공식문서에서의 mutation filter plugin 의 `gsub` 옵션에 대한 설명이다. )
 
-공식문서에는 위와 같은 식으로 여러 옵션들이 친절하게 설명되어 있다. 하지만 나는 처음 보았을 때 당황했다. 예시가 없어서 한 눈에 와닿지가 않았던 것 같다.  
+공식문서에는 위와 같은 식으로 여러 옵션들이 친절하게 설명되어 있다. 하지만 나는 처음 보았을 때 당황했다.   
 
-이 참에 공부도 할 겸 하나씩 사용해보며 예시를 남기고자 한다.  
+아무래도 예시가 없어서 한 눈에 와닿지가 않았던 것 같았는데, 이 참에 공부도 할 겸 하나씩 사용해보며 예시를 남기고자 한다.  
 
 이 글이 mutate를 오랫만에 접할 미래의 나와 Logstash의 mutate를 처음 접하는 사용자에게 조금이나마 도움이 되었으면 한다.  
 
@@ -130,7 +130,7 @@ output {
 
 ### 2. copy
 
-필드의 값을 복제한다.
+필드의 값을 복제한다.  
 
 &nbsp;
 
@@ -201,7 +201,7 @@ output { ... }
 
 배열을 하나의 문자로 합친다.
 
-&nbsp;
+&nbsp;ㅂ
 
 **logstash.conf**
 
@@ -326,6 +326,8 @@ output { ... }
 
 해당 필드 값들을 다른 필드에 포함시킨다.  
 
+&nbsp;
+
 **logstash.conf**
 
 ```ruby
@@ -360,6 +362,8 @@ output { ... }
 
 필드 값이 null인 경우에 기본값을 넣어준다.
 
+&nbsp;
+
 **logstash.conf**
 
 ```ruby
@@ -391,6 +395,8 @@ output { ... }
 ### 10. update
 
 해당 필드의 값을 특정값으로 대체한다.  
+
+&nbsp;
 
 **logstash.conf**
 
@@ -424,6 +430,8 @@ ex) input이 `{ }` , `{ "source_host": "54.17.150.184" }` 인 경우 `field1` �
 
 해당 필드의 값을 특정값으로 대체한다.
 
+&nbsp;
+
 **logstash.conf**
 
 ```ruby
@@ -455,6 +463,8 @@ ex) input이 `{ }` , `{ "source_host": "54.17.150.184" }`인 경우 `message` �
 ### 12. strip
 
 좌우 공백을 제거한다.
+
+&nbsp;
 
 **logstash.conf**
 
@@ -543,25 +553,31 @@ output { ... }
 
 
 
-위의 값에 `{ "field": "abcd"}` 를 넣으면 어떤 결과가 나올까.  
-
-나는 `{ "field": "ABCD", "field_copied": "abcd" }` 라고 예상했다.  
-
-공교롭게도 결과는  `{ "field": "ABCD", "field_copied": "ABCD" }` 이다.   
+**input / output**
 
 <img width="500" alt="스크린샷 2020-04-12 오전 4 10 59" src="https://user-images.githubusercontent.com/25674959/79052762-adf7c180-7c73-11ea-9bf8-893bfac4d56c.png">
 
 &nbsp;
 
-`uppercase` 옵션 실행 이후에 `copy` 옵션이 실행되기 때문인데, 옵션 별로 실행 순서가 정해져 있다.   
+위의 결과는 순차적으로 처리된다면 { "field": "ABCD", "field_copied": "abcd" }` 일 것이다.
 
-그 순서에 대해서는 [공식문서](https://www.elastic.co/guide/en/logstash/current/plugins-filters-mutate.html#plugins-filters-mutate-proc_order)에 나와있다.
+공교롭게도 결과는  `{ "field": "ABCD", "field_copied": "ABCD" }` 이다.   
 
 &nbsp;
 
-만약 `copy` 옵션을 먼저 실행하고자 한다면 어떻게 해야 할까?
+그 이유는 옵션 별로 실행 순서가 정해져 있어  `uppercase` 옵션 실행 이후에 `copy` 옵션이 실행되기 때문이다. 
 
-=> 아래와 같이 mutation을 따로 선언해주면 `copy` 옵션 실행 이후에 `uppercase` 옵션이 실행된다.
+실행 순서에 대해서는 [공식문서](https://www.elastic.co/guide/en/logstash/current/plugins-filters-mutate.html#plugins-filters-mutate-proc_order)에 나와있다.
+
+&nbsp;
+
+#### 만약 `copy` 옵션을 먼저 실행하고자 한다면 어떻게 해야 할까?
+
+아래와 같이 mutation을 따로 선언해주면 `copy` 옵션 실행 이후에 `uppercase` 옵션이 실행된다.
+
+&nbsp;
+
+**logstash.conf**
 
 ```ruby
 input { ... }
@@ -579,6 +595,10 @@ filter {
 
 output { ... }
 ```
+
+&nbsp;
+
+**input / output**
 
 <img width="500" alt="스크린샷 2020-04-12 오전 4 17 56" src="https://user-images.githubusercontent.com/25674959/79052914-9836cc00-7c74-11ea-99cc-263d66fb5b49.png">
 
