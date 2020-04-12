@@ -9,19 +9,19 @@ author: bactoria
 
 raw data를 Elasticsearch로 밀어넣기 전에, 사용하기 편하도록 가공이 필요하다.  
 
-이는 Logstash의 filter로 해결할 수 있는데, 특히  `mutate filter plugin` 를 사용하면 된다.   
+이는 Logstash의 filter로 해결할 수 있는데, 특정 필드를 가공하는 방법 중에  **`mutate filter plugin`** 가 있다.  
 
 해당 플러그인은 [공식문서](https://www.elastic.co/guide/en/logstash/current/plugins-filters-mutate.html#plugins-filters-mutate-convert)에 설명이 잘 되어있다.  
 
 ![image](https://user-images.githubusercontent.com/25674959/79037601-a7cefa00-7c0d-11ea-87ef-b3ed43892fc2.png)
 
-( 공식문서에서의 mutation filter plugin 의 `gsub` 옵션에 대한 설명이다. )
+( 공식문서에서의 **`mutate filter plugin`** 의 `gsub` 옵션에 대한 설명이다. )
 
-공식문서에는 위와 같은 식으로 여러 옵션들이 친절하게 설명되어 있다. 하지만 나는 처음 보았을 때 당황했다.   
+공식문서에는 위와 같은 식으로 여러 옵션들이 친절하게 설명되어 있다.  
 
-아무래도 예시가 없어서 한 눈에 와닿지가 않았던 것 같았는데, 이 참에 공부도 할 겸 하나씩 사용해보며 예시를 남기고자 한다.  
+하지만 예시가 없어서 개인적으로 한 눈에 와닿지가 않았었는데, 공부도 할 겸 하나씩 사용해보며 예시를 남기고자 한다.  
 
-이 글이 mutate를 오랫만에 접할 미래의 나와 Logstash의 mutate를 처음 접하는 사용자에게 조금이나마 도움이 되었으면 한다.  
+이 글이 **`mutate filter plugin`** 를 오랫만에 접할 미래의 나와 **`mutate filter plugin 를 처음 학습하는 사용자에게 조금이나마 도움이 되었으면 한다.  
 
 
 
@@ -29,7 +29,7 @@ raw data를 Elasticsearch로 밀어넣기 전에, 사용하기 편하도록 가�
 
 ## Mutate filter plugin
 
-한 필드에 대하여 변경을 하는데 옵션은 아래처럼 다양하다.
+**`mutate filter plugin`** 의 옵션으로는 아래와 같다.
 
 1. **`convert`**
 2. **`copy`** 
@@ -189,9 +189,9 @@ output { ... }
 
 <img width="500" alt="스크린샷 2020-04-11 오후 8 16 10" src="https://user-images.githubusercontent.com/25674959/79042284-4c166800-7c31-11ea-9796-dc318dc14bd4.png">
 
-- field1: `/` => `_`    
+- **`field1`**: `/` => `_`    
 
-- field2: `?`, `#`, `-` => `.` 
+- **`field2`**: `?`, `#`, `-` => `.` 
 
 &nbsp;
 
@@ -201,7 +201,7 @@ output { ... }
 
 배열을 하나의 문자로 합친다.
 
-&nbsp;ㅂ
+&nbsp;
 
 **logstash.conf**
 
@@ -384,7 +384,7 @@ output { ... }
 
 <img width="500" alt="스크린샷 2020-04-11 오후 8 46 54" src="https://user-images.githubusercontent.com/25674959/79042786-97327a00-7c35-11ea-9866-b13f25c83115.png">
 
-단, input에 해당 필드가 key로 존재하지 않는 경우에는 기본값을 넣지 않는다.   
+단, input에 해당 필드가 key로 존재하지 않는 경우에는 기본값을 넣지 않는다.  ( null 값이 있는 경우에는 대체 함.)
 
  ex. input이 `{ "username": "bactoria" }` 인 경우 `field1` 필드가 생성되지 않음.
 
@@ -559,7 +559,7 @@ output { ... }
 
 &nbsp;
 
-위의 결과는 순차적으로 처리된다면 { "field": "ABCD", "field_copied": "abcd" }` 일 것이다.
+위의 결과는 순차적으로 처리된다면 `{ "field": "ABCD", "field_copied": "abcd" }` 일 것이다.
 
 공교롭게도 결과는  `{ "field": "ABCD", "field_copied": "ABCD" }` 이다.   
 
