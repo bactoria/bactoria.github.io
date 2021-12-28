@@ -41,3 +41,5 @@ exclude:
     # - https://github.com/ngzhio
 # google_site_verification: u4WXQl0Eu66rsQo2kRdCNx
 # lang: en
+
+permalink: /:year/:month/:day/:title/
