@@ -86,10 +86,10 @@ avatar: /u/25674959?v=4
 toc: true
 
 comments:
-  active:         # The global switch for posts comments, e.g., 'disqus'.  Keep it empty means disable
+  active: disqus # The global switch for posts comments, e.g., 'disqus'.  Keep it empty means disable
   # The active options are as follows:
   disqus:
-    shortname:    bactoria # fill with the Disqus shortname. › https://help.disqus.com/en/articles/1717111-what-s-a-shortname
+    shortname: bactoria # fill with the Disqus shortname. › disqus
   # utterances settings › https://utteranc.es/
   utterances:
     repo:         # <gh-username>/<repo>
