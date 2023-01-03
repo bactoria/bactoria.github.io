@@ -6,7 +6,7 @@ categories: DDD
 author: bactoria
 ---
 
-# Value Object (값 객체)
+## Value Object (값 객체)
 
 <img src="https://user-images.githubusercontent.com/25674959/210389274-b436b4c4-e1d9-4e53-a553-1d9fdb4bcce7.png" width=500>
 
@@ -20,12 +20,13 @@ author: bactoria
 
 개념 모델링 시 유비쿼터스 언어를 활용할 것 
 
-- 서비스에서 사용되는 네이밍인지 ?
+- 서비스에서 사용되는 개념 / 용어 인지 ?
 - 기획 / 앱 개발자들도 해당 개념을 인지하고 있는지 ?
 
 <br>
 
-**Value Object?**
+### **Value Object?**
+
 - 도메인 내에서 측정 / 설명이 가능한 어떤 것
   - 측정: 사람의 나이 (Age)
   - 설명: 사람의 이름 (Name)
